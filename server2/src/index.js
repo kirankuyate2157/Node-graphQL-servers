@@ -2,7 +2,11 @@ import express, { json } from 'express';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import cors from "cors";
+import { prisma } from './lib/db.js';
 
+import dotenv from 'dotenv';
+
+dotenv.config()
 const init = async () => {
 
     const app = express();
@@ -23,12 +27,27 @@ const init = async () => {
             hello:String
             say(name:String): String
         }
+
+        type Mutation  {
+            createUser(firstName:String!, lastName:String!, email:String!, password:String!):Boolean
+
+        }
         `,
 
         resolvers: {
             Query: {
                 hello: () => "hello graphql !",
-                say: (_,{name}) => `hi ${name}, great to see you here!`
+                say: (_, { name }) => `hi ${name}, great to see you here!`,
+
+            },
+
+            Mutation: {
+                createUser: async (_, { firstName, lastName, email, password }) => {
+                    await prisma.user.create({
+                        data: { firstName, lastName, password, email, salt: "random_salt" }
+                    });
+                    return true;
+                }
             }
         }
     });
