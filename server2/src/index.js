@@ -23,14 +23,22 @@ const init = async () => {
 
     const gqlServer = new ApolloServer({
         typeDefs: `
+        type User {
+            firstName: String
+            lastName: String
+            email: String
+            password: String
+            salt: String
+        }
+
         type Query {
             hello:String
             say(name:String): String
+            tell: [User]
         }
 
         type Mutation  {
             createUser(firstName:String!, lastName:String!, email:String!, password:String!):Boolean
-
         }
         `,
 
@@ -38,7 +46,10 @@ const init = async () => {
             Query: {
                 hello: () => "hello graphql !",
                 say: (_, { name }) => `hi ${name}, great to see you here!`,
-
+                tell: async () => {
+                    const res = await prisma.user.findMany();
+                    return res
+                }
             },
 
             Mutation: {
