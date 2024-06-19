@@ -7,4 +7,5 @@ export const queries = `
         say(name:String): String
         tell: [User]
         loginUser( email:String!, password:String!):String
+        getCurrentLoggedUser: User
 `;

@@ -1,11 +1,11 @@
-import { prisma } from '../lib/db.js';
-import { ApolloServer } from '@apollo/server';
-import { User } from './user/index.js';
-import { typeDefs } from './user/typeDefs.js';
+import { prisma } from "../lib/db.js";
+import { ApolloServer } from "@apollo/server";
+import { User } from "./user/index.js";
+import { typeDefs } from "./user/typeDefs.js";
 
 export default async function createGraphqlServer() {
-    const gqlServer = new ApolloServer({
-        typeDefs: `
+  const gqlServer = new ApolloServer({
+    typeDefs: `
         ${typeDefs}
         type Query {
             ${User.queries}
@@ -16,16 +16,16 @@ export default async function createGraphqlServer() {
         
         }
         `,
-        resolvers: {
-            Query: {
-                ...User.resolvers.queries,
-            },
-            Mutation:{
-                ...User.resolvers.mutations,
-            }
-        },
-    });
+    resolvers: {
+      Query: {
+        ...User.resolvers.queries,
+      },
+      Mutation: {
+        ...User.resolvers.mutations,
+      },
+    },
+  });
 
-    await gqlServer.start();
-    return gqlServer;
+  await gqlServer.start();
+  return gqlServer;
 }
